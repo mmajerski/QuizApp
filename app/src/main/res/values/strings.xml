@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">QuizApp</string>
+    <string name="title">QuizApp</string>
+    <string name="true_title">true</string>
+    <string name="false_title">false</string>
+    <string name="prev_button">previous button</string>
+    <string name="next_button">next button</string>
+    <string name="counter_questions">0 out of 100</string>
+    <string name="correct_answer">correct</string>
+    <string name="wrong_answer">wrong</string>
+    <string name="share_btn">share</string>
+</resources>
