@@ -6,6 +6,7 @@ import androidx.cardview.widget.CardView;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -72,21 +73,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         myDb = new DatabaseHelper(this);
 
         // get previous state
-        currentQuestionIndex = prefs.getCurrentQuestionIndex();
-        scoreCounter = prefs.getCurrentScore();
+//        currentQuestionIndex = prefs.getCurrentQuestionIndex();
+//        scoreCounter = prefs.getCurrentScore();
+//        score.setScore(scoreCounter);
+
+        // sqlite
+        currentQuestionIndex = myDb.getCurrentQuestionIndex();
+        Log.d("INDEX", "onCreate: " + currentQuestionIndex);
+        scoreCounter = myDb.getCurrentScore();
         score.setScore(scoreCounter);
 
         scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
 
         // sqlite
-//        Cursor res = myDb.getHighestScore();
-//        if(res.getCount() == 0) {
-//            highestScoreTextView.setText(MessageFormat.format("Highest Score: {0}", 0));
-//        } else {
-//            highestScoreTextView.setText(MessageFormat.format("Highest Score: {0}", res.getString(1)));
-//        }
+        int highestScore = myDb.getHighestScore();
+        highestScoreTextView.setText(MessageFormat.format("Highest Score: {0}", highestScore));
 
-        highestScoreTextView.setText(MessageFormat.format("Highest Score: {0}", String.valueOf(prefs.getHighestScore())));
+//        highestScoreTextView.setText(MessageFormat.format("Highest Score: {0}", String.valueOf(prefs.getHighestScore())));
 
         questionList = new QuestionBank().getQuestions(new AnswerListAsyncResponse() {
             @Override
@@ -213,17 +216,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onPause() {
-        //sqlite
-//        boolean isInserted = myDb.saveHighestScore(score.getScore());
-//        if(isInserted) {
-//            Toast.makeText(MainActivity.this, "Data Inserted", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(MainActivity.this, "Data not Inserted", Toast.LENGTH_SHORT).show();
-//        }
-
-        prefs.saveHighestScore(score.getScore());
-        prefs.setCurrentQuestionIndex(currentQuestionIndex);
-        prefs.setCurrentScore(scoreCounter);
+//        prefs.saveHighestScore(score.getScore());
+        myDb.saveHighestScore(score.getScore());
+//        prefs.setCurrentQuestionIndex(currentQuestionIndex);
+        myDb.setCurrentQuestionIndex(currentQuestionIndex);
+//        prefs.setCurrentScore(scoreCounter);
+        myDb.setCurrentScore(scoreCounter);
         super.onPause();
     }
 }
