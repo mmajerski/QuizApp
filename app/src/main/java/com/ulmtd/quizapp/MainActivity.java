@@ -3,6 +3,7 @@ package com.ulmtd.quizapp;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -12,11 +13,13 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ulmtd.quizapp.data.AnswerListAsyncResponse;
 import com.ulmtd.quizapp.data.QuestionBank;
 import com.ulmtd.quizapp.model.Question;
 import com.ulmtd.quizapp.model.Score;
+import com.ulmtd.quizapp.util.DatabaseHelper;
 import com.ulmtd.quizapp.util.Preferences;
 
 import java.text.MessageFormat;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView scoreTextView;
 
     private Preferences prefs;
+    DatabaseHelper myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,12 +68,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         trueButton.setOnClickListener(this);
         falseButton.setOnClickListener(this);
 
+        // sqlite
+        myDb = new DatabaseHelper(this);
+
         // get previous state
         currentQuestionIndex = prefs.getCurrentQuestionIndex();
         scoreCounter = prefs.getCurrentScore();
         score.setScore(scoreCounter);
 
         scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+
+        // sqlite
+//        Cursor res = myDb.getHighestScore();
+//        if(res.getCount() == 0) {
+//            highestScoreTextView.setText(MessageFormat.format("Highest Score: {0}", 0));
+//        } else {
+//            highestScoreTextView.setText(MessageFormat.format("Highest Score: {0}", res.getString(1)));
+//        }
 
         highestScoreTextView.setText(MessageFormat.format("Highest Score: {0}", String.valueOf(prefs.getHighestScore())));
 
@@ -198,6 +213,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onPause() {
+        //sqlite
+//        boolean isInserted = myDb.saveHighestScore(score.getScore());
+//        if(isInserted) {
+//            Toast.makeText(MainActivity.this, "Data Inserted", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(MainActivity.this, "Data not Inserted", Toast.LENGTH_SHORT).show();
+//        }
+
         prefs.saveHighestScore(score.getScore());
         prefs.setCurrentQuestionIndex(currentQuestionIndex);
         prefs.setCurrentScore(scoreCounter);
