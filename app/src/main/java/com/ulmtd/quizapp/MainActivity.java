@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onPause() {
 //        prefs.saveHighestScore(score.getScore());
-        myDb.saveHighestScore(score.getScore());
+        myDb.saveScore(score.getScore());
 //        prefs.setCurrentQuestionIndex(currentQuestionIndex);
         myDb.setCurrentQuestionIndex(currentQuestionIndex);
 //        prefs.setCurrentScore(scoreCounter);
