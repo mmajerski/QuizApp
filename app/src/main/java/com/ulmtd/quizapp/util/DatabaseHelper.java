@@ -9,6 +9,10 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.ulmtd.quizapp.model.Score;
+
+import java.util.ArrayList;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "quiz2.db";
 
@@ -23,6 +27,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("create table if not exists current_score(ID int, VALUE int);");
 
         sqLiteDatabase.execSQL("insert into scores values('1234', '0');");
+
+        //dummy inserts
+        sqLiteDatabase.execSQL("insert into scores values('1234', '200');");
+        sqLiteDatabase.execSQL("insert into scores values('1234', '400');");
+        sqLiteDatabase.execSQL("insert into scores values('1234', '30');");
+        sqLiteDatabase.execSQL("insert into scores values('1234', '2');");
+
         sqLiteDatabase.execSQL("insert into question_index values('1234', '0');");
         sqLiteDatabase.execSQL("insert into current_score values('1234', '0');");
     }
@@ -48,9 +59,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int getHighestScore() {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor res = db.rawQuery("select ID, MAX(VALUE) from scores", null);
+        Cursor res = db.rawQuery("select ID, VALUE from scores", null);
         res.moveToFirst();
         return res.getInt(1);
+    }
+
+    public ArrayList<Score> getTopScores(Integer n){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String[] args = {(n).toString()};
+        Cursor res = db.rawQuery("select ID, VALUE from scores order by Value limit ?", args);
+        res.moveToFirst();
+
+        ArrayList<Score> scores = new ArrayList<>();
+        for(int i=0; i< res.getCount(); ++i){
+            scores.add(new Score(res.getInt(1)));
+        }
+
+        return scores;
+
     }
 
     public void setCurrentQuestionIndex(int index) {

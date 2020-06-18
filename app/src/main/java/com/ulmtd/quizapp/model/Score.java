@@ -3,7 +3,8 @@ package com.ulmtd.quizapp.model;
 public class Score {
     private int score;
 
-    public Score() {
+    public Score(int val) {
+        this.score = val;
     }
 
     public int getScore() {

@@ -1,7 +1,10 @@
 package com.ulmtd.quizapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import android.database.Cursor;
 import android.graphics.Color;
@@ -28,6 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private static final int SCOREBOARD_MAX_LENGTH = 5;
+
     private TextView questionTextView;
     private  TextView questionCounterTextView;
     private Button trueButton;
@@ -37,10 +42,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView highestScoreTextView;
     private int currentQuestionIndex = 0;
     private List<Question> questionList;
+    private ArrayList<Score> history;
 
     private int scoreCounter = 0;
     private Score score;
     private TextView scoreTextView;
+    private ScoreboardFragment scoreboard = null;
 
     private Preferences prefs;
     DatabaseHelper myDb;
@@ -50,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        score = new Score();
         scoreTextView = findViewById(R.id.score_text);
 
         prefs = new Preferences(MainActivity.this);
@@ -81,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         currentQuestionIndex = myDb.getCurrentQuestionIndex();
         Log.d("INDEX", "onCreate: " + currentQuestionIndex);
         scoreCounter = myDb.getCurrentScore();
-        score.setScore(scoreCounter);
+        score = new Score(scoreCounter);
 
         scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
 
@@ -98,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 questionCounterTextView.setText(MessageFormat.format("{0} / {1}", currentQuestionIndex, questionArrayList.size()));
             }
         });
+
+        history = myDb.getTopScores(SCOREBOARD_MAX_LENGTH);
     }
 
     @Override
@@ -136,6 +144,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         scoreCounter += 100;
         score.setScore(scoreCounter);
         scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+        setScoreboard();
+        if(scoreboard!= null){
+            scoreboard.setCurrentScore(new Score(scoreCounter));
+            scoreboard.setScoreHistory(history);
+            scoreboard.refreshScoreboard();
+        }
+
+
     }
 
     private void deductPoints() {
@@ -148,6 +164,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             score.setScore(scoreCounter);
             scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
         }
+    }
+
+    private void setScoreboard(){
+        //asd
     }
 
     private void updateQuestion() {
@@ -223,5 +243,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        prefs.setCurrentScore(scoreCounter);
         myDb.setCurrentScore(scoreCounter);
         super.onPause();
+    }
+
+
+    @Override
+    public void onAttachFragment(@NonNull Fragment fragment) {
+        super.onAttachFragment(fragment);
+        if(fragment instanceof ScoreboardFragment){
+            this.scoreboard = (ScoreboardFragment) fragment;
+        }
     }
 }
