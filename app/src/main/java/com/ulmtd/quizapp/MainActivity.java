@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentActivity;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -32,6 +33,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final int SCOREBOARD_MAX_LENGTH = 5;
+    private long mLastClickTime = 0;
 
     private TextView questionTextView;
     private  TextView questionCounterTextView;
@@ -121,9 +123,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 goToNextQuestion();
                 break;
             case R.id.true_button:
+                // mis-clicking prevention, using threshold of 1000 ms
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 checkAnswer(true);
                 break;
             case R.id.false_button:
+                // mis-clicking prevention, using threshold of 1000 ms
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
                 checkAnswer(false);
                 break;
         }
@@ -159,6 +173,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(scoreCounter > 0) {
             score.setScore(scoreCounter);
             scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
+
+            if(scoreboard!= null){
+                scoreboard.setCurrentScore(new Score(scoreCounter));
+                scoreboard.setScoreHistory(history);
+                scoreboard.refreshScoreboard();
+            }
         } else {
             scoreCounter = 0;
             score.setScore(scoreCounter);
