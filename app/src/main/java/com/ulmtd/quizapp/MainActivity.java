@@ -164,6 +164,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             score.setScore(scoreCounter);
             scoreTextView.setText(MessageFormat.format("Current Score: {0}", String.valueOf(score.getScore())));
         }
+        if(scoreboard!= null){
+            scoreboard.setCurrentScore(new Score(scoreCounter));
+            scoreboard.setScoreHistory(history);
+            scoreboard.refreshScoreboard();
+        }
     }
 
     private void setScoreboard(){
