@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //dummy inserts
 //        sqLiteDatabase.execSQL("insert into scores values('1234', '200');");
-//        sqLiteDatabase.execSQL("insert into scores values('1234', '400');");
+         sqLiteDatabase.execSQL("insert into scores values('1234', '400');");
 //        sqLiteDatabase.execSQL("insert into scores values('1234', '30');");
 //        sqLiteDatabase.execSQL("insert into scores values('1234', '2');");
 

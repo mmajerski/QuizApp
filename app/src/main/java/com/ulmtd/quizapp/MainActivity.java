@@ -276,6 +276,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onAttachFragment(fragment);
         if(fragment instanceof ScoreboardFragment){
             this.scoreboard = (ScoreboardFragment) fragment;
+            this.scoreboard.setCurrentScore(new Score(scoreCounter));
+            this.scoreboard.setScoreHistory(this.history);
         }
     }
 }

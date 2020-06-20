@@ -30,11 +30,8 @@ public class ScoreboardFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.scoreboard_fragment,container,false);
-//        Log.d(TAG,"onCreateView called");
 
         ArrayList<String> data = new ArrayList<>();
-        data.add("asd");
-        data.add("zxc");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,data);
 
@@ -58,25 +55,28 @@ public class ScoreboardFragment extends Fragment {
         if (scoreboard_list == null){
             this.scoreboard_list = getView().findViewById(R.id.scoreboard_list);
         }
+
         ArrayList<String> scoreboard_texts = new ArrayList<>();
+        if (this.history != null) {
+            int player_idx = getCurrentScorePosition();
 
-        int player_idx = getCurrentScorePosition();
-
-        int position = 1;
-        boolean playerAdded = false;
-        for(int i =0; i< history.size();++i){
-            if (i == player_idx){
-                scoreboard_texts.add(String.format("%d:  >>%d<<", position,current_score.getScore()));
+            int position = 1;
+            boolean playerAdded = false;
+            for(int i =0; i< history.size();++i){
+                if (i == player_idx){
+                    scoreboard_texts.add(String.format("%d:  >>%d<<", position,current_score.getScore()));
+                    ++position;
+                    playerAdded = true;
+                }
+                scoreboard_texts.add(String.format("%d:  %d", position,history.get(i).getScore()));
                 ++position;
-                playerAdded = true;
             }
-            scoreboard_texts.add(String.format("%d:  >%d<", position,history.get(i).getScore()));
-            ++position;
+
+            if(!playerAdded) {
+                scoreboard_texts.add(String.format("%d:  >>%d<<", position,current_score.getScore()));
+            }
         }
 
-        if(!playerAdded) {
-            scoreboard_texts.add(String.format("%d:  >>%d<<", position,current_score.getScore()));
-        }
 
         ArrayAdapter adapter = new ArrayAdapter(getContext(),android.R.layout.simple_list_item_1,scoreboard_texts);
         scoreboard_list.setAdapter(adapter);
@@ -104,8 +104,11 @@ public class ScoreboardFragment extends Fragment {
     }
 
 
-
-
-
+    @Override
+    public void onResume() {
+        Log.d("fragment", "onResume Called");
+        super.onResume();
+        this.refreshScoreboard();
+    }
 
 }
